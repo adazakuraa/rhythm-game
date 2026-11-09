@@ -6,6 +6,12 @@ const DEFAULT_SETTINGS = {
   volGuide: 0.7,
   volMetro: 0.6,
   volBack: 0.35,
+  // 奏法ごとの音量（1 = 標準, 最大 2）
+  volB: 1.3,
+  volS: 1,
+  volg: 1,
+  volO: 1,
+  volM: 1,
   offsetMs: null, // null = 自動（ブラウザの出力遅延を使用）
   judgeMode: 'normal', // normal | easy | timing
   noteSpeed: 1,

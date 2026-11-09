@@ -1,5 +1,5 @@
 // オフライン対応（一度開けば、ネットがなくても遊べる）
-const CACHE = 'cajon-dojo-v1';
+const CACHE = 'cajon-dojo-v2';
 const ASSETS = [
   './', 'index.html', 'css/style.css', 'manifest.webmanifest', 'icon.svg',
   'js/main.js', 'js/audio.js', 'js/sounds.js', 'js/storage.js', 'js/patterns.js', 'js/judge.js',

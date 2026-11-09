@@ -7,6 +7,9 @@ let buf = {};
 const bus = {};
 const tracked = new Set();
 
+// 音色名 → 奏法ごとの音量設定キー
+const TECH_VOL = { bass: 'volB', slap: 'volS', ghost: 'volg', open: 'volO', mute: 'volM' };
+
 const mtof = (m) => 440 * Math.pow(2, (m - 69) / 12);
 
 function track(node) {
@@ -65,6 +68,8 @@ export const Audio = {
   play(name, when = 0, gain = 1, b = 'tap') {
     if (!ctx) this.init();
     if (!ctx || !buf[name]) return null;
+    const vk = TECH_VOL[name];
+    if (vk) gain *= db.settings()[vk] ?? 1;
     const src = ctx.createBufferSource();
     src.buffer = buf[name];
     let out = src;

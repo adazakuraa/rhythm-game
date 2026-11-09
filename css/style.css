@@ -295,6 +295,12 @@ textarea { font-size: 12px; margin: 8px 0; }
 .calib-pad.lit { background: #6b4322; }
 .credit { margin-top: 18px; }
 
+.tech-vol { display: flex; align-items: center; gap: 8px; margin: 6px 0; min-height: 44px; }
+.tech-vol b { width: 64px; font-size: 13.5px; }
+.tech-vol input { flex: 1; accent-color: var(--c); min-height: 32px; }
+.tv-val { width: 44px; text-align: right; font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.tech-vol .btn { min-width: 44px; padding: 4px 8px; }
+
 /* ---------- 研究室 ---------- */
 .palette { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; align-items: center; }
 .tool {
