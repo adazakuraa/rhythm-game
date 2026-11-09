@@ -42,15 +42,19 @@ const att = (t, k = 1500) => 1 - Math.exp(-t * k);
 
 const RECIPES = {
   // ベース：中央を叩く低音。ピッチが下がる胴鳴り＋打撃ノイズ
+  // スマホの小さいスピーカーでも聞こえるよう、2〜3倍音と中低域のアタックを含める
   bass: { dur: 0.5, level: 1.0, fn(d, sr, n) {
     const nz = biquad(noise(n, 3), 'lp', 700, 0.7, sr);
+    const thump = biquad(noise(n, 4), 'bp', 260, 1.2, sr);
     let ph = 0;
     for (let i = 0; i < n; i++) {
       const t = i / sr;
-      const f = 54 + 85 * Math.exp(-t * 26);
+      const f = 66 + 90 * Math.exp(-t * 24);
       ph += (2 * Math.PI * f) / sr;
-      d[i] = att(t) * (Math.sin(ph) * Math.exp(-t * 7.5) + 0.22 * Math.sin(2 * ph) * Math.exp(-t * 18))
-        + nz[i] * 0.45 * Math.exp(-t * 55);
+      const body = Math.sin(ph) * Math.exp(-t * 7)
+        + 0.5 * Math.sin(2 * ph) * Math.exp(-t * 12)
+        + 0.25 * Math.sin(3 * ph) * Math.exp(-t * 18);
+      d[i] = att(t) * Math.tanh(body * 1.3) + nz[i] * 0.45 * Math.exp(-t * 55) + thump[i] * 1.6 * Math.exp(-t * 35);
     }
   } },
   // スラップ：上端を叩く高音。乾いたアタック＋スナッピー（響き線）

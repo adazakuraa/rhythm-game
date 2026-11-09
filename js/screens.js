@@ -10,6 +10,8 @@ import { PROGS } from './backing.js';
 import { SIGS } from './editor.js';
 import { inputOffset } from './judge.js';
 
+export const APP_VERSION = '0.2（奏法ごとの音量）';
+
 // ---------------- ホーム ----------------
 export function homeScreen(app) {
   const all = allPatterns();
@@ -183,7 +185,15 @@ export function settingsScreen(app) {
     ${header('設定', '')}
     <div class="pad">
       <h3>音量</h3>
-      ${vol('volTap', '自分のタップ音')}${vol('volGuide', 'お手本・ドラム')}${vol('volMetro', 'メトロノーム')}${vol('volBack', '伴奏')}
+      ${vol('volTap', '自分のタップ音（全体）')}${vol('volGuide', 'お手本・ドラム')}${vol('volMetro', 'メトロノーム')}${vol('volBack', '伴奏')}
+      <h3>奏法ごとの音量</h3>
+      <p class="small">タップ音・お手本の両方に反映されます。100%が標準、最大200%。▶で試し聴き。</p>
+      ${TECH_ORDER.map((k) => `<div class="tech-vol" style="--c:${TECH[k].color}">
+        <span class="cell n-${k} mini"><i></i></span><b>${TECH[k].short}</b>
+        <input type="range" min="0" max="2" step="0.05" data-set="vol${k}" value="${s['vol' + k] ?? 1}" aria-label="${TECH[k].name}の音量">
+        <span class="tv-val" data-tv="vol${k}"></span>
+        <button class="btn small" data-try="${k}">▶</button></div>`).join('')}
+      <button class="btn small" data-ref="techReset">奏法ごとの音量を標準に戻す</button>
       <h3>タイミング調整</h3>
       <p class="small">タップの判定が「いつも遅い／早い」と感じたら調整します。Bluetoothイヤホンは遅延が大きいので有線かスピーカー推奨。</p>
       <label class="check"><input type="checkbox" data-ref="auto" ${s.offsetMs == null ? 'checked' : ''}> 自動（ブラウザの推定値：<span data-ref="autoVal"></span>ms）</label>
@@ -212,7 +222,7 @@ export function settingsScreen(app) {
       <div class="row2"><button class="btn" data-ref="exp">バックアップを表示</button><button class="btn" data-ref="imp">復元する</button></div>
       <textarea data-ref="ta" rows="4" hidden placeholder="バックアップの文字列"></textarea>
       <button class="btn danger" data-ref="reset">すべてのデータを消去</button>
-      <p class="small credit">音色はすべてブラウザ内で合成しています。収録パターン・伴奏はすべてオリジナルです。</p>
+      <p class="small credit">音色はすべてブラウザ内で合成しています。収録パターン・伴奏はすべてオリジナルです。<br>バージョン ${APP_VERSION}</p>
     </div>
   </div>`);
   app.appendChild(root);
@@ -229,6 +239,7 @@ export function settingsScreen(app) {
     r.off.value = v; r.offVal.textContent = v;
     r.off.disabled = auto;
     r.spdVal.textContent = db.settings().noteSpeed.toFixed(1);
+    root.querySelectorAll('[data-tv]').forEach((e) => { e.textContent = Math.round((db.settings()[e.dataset.tv] ?? 1) * 100) + '%'; });
   }
   syncOffset();
 
@@ -240,6 +251,20 @@ export function settingsScreen(app) {
     Audio.applyVolumes();
     syncOffset();
   }));
+  root.querySelectorAll('[data-try]').forEach((b) => b.addEventListener('click', () => {
+    Audio.init();
+    Audio.play(TECH[b.dataset.try].sound, 0, 1, 'tap');
+  }));
+  // スライダーを離したときに試し聴き
+  root.querySelectorAll('.tech-vol input').forEach((el) => el.addEventListener('change', () => {
+    Audio.play(TECH[el.dataset.set.slice(3)].sound, 0, 1, 'tap');
+  }));
+  r.techReset.addEventListener('click', () => {
+    const def = { volB: 1.3, volS: 1, volg: 1, volO: 1, volM: 1 };
+    for (const [k, v] of Object.entries(def)) { db.set(k, v); root.querySelector(`[data-set=${k}]`).value = v; }
+    syncOffset();
+    toast('標準の音量に戻しました');
+  });
   r.auto.addEventListener('change', () => { db.set('offsetMs', r.auto.checked ? null : Math.round(Audio.latency() * 1000)); syncOffset(); });
   r.off.addEventListener('input', () => { db.set('offsetMs', +r.off.value); syncOffset(); });
 
