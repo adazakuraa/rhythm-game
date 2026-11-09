@@ -1,0 +1,11 @@
+{
+  "name": "カホン・リズム道場",
+  "short_name": "カホン道場",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#1b1410",
+  "theme_color": "#1b1410",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}
