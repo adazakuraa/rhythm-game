@@ -52,3 +52,6 @@ export function rankBadge(best) {
   if (!best) return '';
   return `<span class="rank r-${best.rank}">${best.rank}</span>`;
 }
+
+/** 画面間で受け渡す一時データ（保存前の下書き・結果など） */
+export const memory = {};

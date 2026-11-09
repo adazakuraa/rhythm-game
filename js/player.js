@@ -84,7 +84,7 @@ export class Looper {
       const c = p.notes[i];
       const acc = p.accent[i] !== '.';
       if (c !== '.') {
-        loop.notes.push({ t, type: c, step: i, acc, j: null });
+        loop.notes.push({ t, type: c, step: i, acc, j: null, loop });
         if (f.guide && f.cajon !== false) Audio.play(TECH[c].sound, t, acc ? 1 : 0.78, 'guide');
       }
       if (f.drums && p.drums) {
